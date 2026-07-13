@@ -1,206 +1,833 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <!-- Nếu file ảnh của bạn là favicon.png -->
-    <link rel="icon" href="./favicon.png" type="image/x-icon">
-	<meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hệ thống quản lý thông tin y tế - Bệnh viện YHCT Quảng Nam</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <style>
-        :root {
-            --primary-bg: #004d40;
-            --button-bg: #1a237e;
-            --button-hover: #303f9f;
-            --text-color: #ffffff;
-            --accent-yellow: #ffeb3b;
-            --header-height: 60px; /* Chiều cao cố định của header */
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HanoiWork - Không gian làm việc số</title>
+<style>
+  :root{
+    --blue-900:#0b2c6b;
+    --blue-700:#12409c;
+    --blue-600:#1a4fc4;
+    --blue-500:#2260e0;
+    --red-600:#da251d;
+    --yellow-500:#ffcd00;
+    --ink:#1b2333;
+    --muted:#6b7688;
+    --line:#e3e6ec;
+    --bg:#f4f6fb;
+    --white:#ffffff;
+    --radius:14px;
+    font-family: "Inter","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bg);color:var(--ink);}
+  a{color:inherit;}
+  button{font-family:inherit;}
 
-        /* KHÓA CUỘN TRANG */
-        html, body {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100vh; /* Full chiều cao màn hình */
-            overflow: hidden; /* Tuyệt đối không cho cuộn */
-            background-color: #f0f2f5;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            display: flex;
-            flex-direction: column; /* Sắp xếp Header trên, Content dưới */
-        }
+  /* ---------- LOGIN SCREEN ---------- */
+  #login-screen{
+    min-height:100vh;
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+  }
+  @media (max-width:900px){
+    #login-screen{grid-template-columns:1fr;}
+    #login-screen .art-panel{display:none;}
+  }
+  .form-panel{
+    background:var(--white);
+    padding:56px 64px;
+    display:flex;
+    flex-direction:column;
+  }
+  .top-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:64px;
+  }
+  .brand{
+    display:flex;
+    align-items:center;
+    gap:12px;
+  }
+  .brand-badge{
+    width:64px;height:64px;
+    border-radius:14px;
+    background:linear-gradient(160deg,var(--blue-500),var(--blue-900));
+    display:flex;align-items:center;justify-content:center;
+    color:#fff;
+    box-shadow:0 8px 20px rgba(18,64,156,.28);
+  }
+  .brand-badge svg{width:32px;height:32px;}
+  .brand-text{font-weight:800;font-size:15px;line-height:1.25;color:var(--blue-900);}
+  .brand-text span{display:block;}
+  .lang-switch{
+    display:flex;align-items:center;gap:8px;
+    border:1px solid var(--line);
+    border-radius:999px;
+    padding:6px 14px;
+    font-size:14px;font-weight:600;
+    cursor:pointer;
+    background:#fff;
+    color:var(--ink);
+    user-select:none;
+  }
+  .lang-switch .flag{width:18px;height:18px;border-radius:50%;background:var(--red-600);position:relative;display:inline-block;}
+  .lang-switch .flag:after{content:"";position:absolute;inset:0;margin:auto;width:9px;height:9px;background:var(--yellow-500);clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);}
 
-        header {
-            background-color: DarkGreen;
-	    	padding: 0px 0px;
-            height: var(--header-height);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-bottom: 4px solid #DC143C;
-            flex-shrink: 0; /* Không cho header bị co lại */
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-            position: relative;
-        }
+  .form-panel h1{font-size:26px;font-weight:800;margin:0 0 28px;}
 
-		.logo-container {
-		    position: absolute;	
-		    left: 0px;            
-		    /* Căn logo sát lề trái theo chiều ngang */
-		    justify-content: flex-start; 
-		    /* Căn logo lên phía trên theo chiều dọc */
-		    align-items: flex-start;     
-		    
-		    width: 60px; /* Kích thước khung chứa logo */
-		    margin: 10px; /* Thêm khoảng cách với mép màn hình nếu cần */
-		}
-	
-		.main-logo {
-		    width: 100%;  /* Ảnh tự co theo chiều rộng 50px của container */
-		    height: auto; /* Giữ nguyên tỷ lệ ảnh */
-		    display: block;
-		}
+  .field{
+    position:relative;
+    margin-bottom:16px;
+  }
+  .field input{
+    width:100%;
+    padding:16px 44px 16px 46px;
+    border:1px solid var(--line);
+    border-radius:10px;
+    font-size:15px;
+    outline:none;
+    transition:border-color .15s, box-shadow .15s;
+    background:#fbfcfe;
+  }
+  .field input::placeholder{color:#9aa2b1;}
+  .field input:focus{border-color:var(--blue-500); box-shadow:0 0 0 3px rgba(34,96,224,.12); background:#fff;}
+  .field .icon{
+    position:absolute;left:14px;top:50%;transform:translateY(-50%);
+    color:#9aa2b1;
+    display:flex;
+  }
+  .field .icon svg{width:18px;height:18px;}
+  .field .toggle-eye{
+    position:absolute;right:14px;top:50%;transform:translateY(-50%);
+    cursor:pointer;color:#9aa2b1;background:none;border:none;padding:0;display:flex;
+  }
+  .field .toggle-eye svg{width:19px;height:19px;}
 
-        header h1 {
-            color: var(--text-color);
-            font-size: 22px;
-            text-transform: uppercase;
-            text-align: center;
-            margin: 0;
-        }
+  .forgot{
+    display:flex;justify-content:flex-end;
+    margin-bottom:22px;
+  }
+  .forgot a{color:var(--blue-600);font-size:14px;font-weight:600;text-decoration:none;}
+  .forgot a:hover{text-decoration:underline;}
 
-        /* KHU VỰC CHỨA CÁC Ô CHỨC NĂNG */
-        .main-content {
-            flex-grow: 1; /* Tự động chiếm hết phần còn lại của màn hình */
-            padding: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+  .btn-primary{
+    width:100%;
+    padding:15px;
+    border:none;
+    border-radius:10px;
+    background:var(--blue-700);
+    color:#fff;
+    font-size:16px;
+    font-weight:700;
+    cursor:pointer;
+    transition:background .15s, transform .05s;
+  }
+  .btn-primary:hover{background:var(--blue-600);}
+  .btn-primary:active{transform:scale(.99);}
+  .btn-primary[disabled]{opacity:.55;cursor:not-allowed;}
 
-        .grid-system {
-            display: grid;
-            /* Chia 3 cột, mỗi cột chiếm 1 phần bằng nhau */
-            grid-template-columns: repeat(3, 1fr);
-            /* Chia 8 hàng, mỗi hàng chiếm 1 phần bằng nhau */
-            grid-template-rows: repeat(8, 1fr); 
-            gap: 10px; /* Khoảng cách giữa các ô */
-            width: 100%;
-            height: 100%; /* Lấp đầy phần còn lại */
-            max-width: 1400px;
-        }
+  .divider{
+    display:flex;align-items:center;gap:14px;
+    color:var(--muted);font-size:13px;
+    margin:28px 0 20px;
+  }
+  .divider:before,.divider:after{content:"";flex:1;height:1px;background:var(--line);}
 
-        /* THẺ CARD TỰ CO GIÃN */
-        .card {
-            background-color: var(--button-bg);
-            border-radius: 6px;
-            display: flex;
-            align-items: center;
-            text-decoration: none;
-            transition: 0.2s;
-            border: 1px solid rgba(255,255,255,0.1);
-            overflow: hidden;
-            height: 100%; /* Ô sẽ tự cao lên để khít màn hình */
-        }
+  .alt-login{
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:13px 16px;
+    display:flex;align-items:center;gap:12px;
+    margin-bottom:12px;
+    cursor:pointer;
+    background:#fff;
+    transition:border-color .15s, background .15s;
+  }
+  .alt-login:hover{border-color:var(--blue-500); background:#f7faff;}
+  .alt-login .glyph{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .alt-login .glyph svg{width:20px;height:20px;}
+  .alt-login .label{flex:1;font-size:14.5px;font-weight:600;}
+  .badge-soon{
+    font-size:11px;font-weight:700;color:#b06a00;background:#fff1d6;
+    padding:3px 8px;border-radius:6px;
+  }
 
-        .card:hover {
-            transform: scale(1.02);
-            background-color: var(--button-hover);
-            border-color: var(--accent-yellow);
-            z-index: 10;
-        }
+  .art-panel{
+    background:#eef1f6;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    padding:56px;
+  }
+  .art-card{max-width:520px;width:100%;}
+  .art-image{
+    width:100%;aspect-ratio:16/10.5;
+    border-radius:16px;
+    overflow:hidden;
+    box-shadow:0 20px 40px rgba(20,40,90,.15);
+    background:linear-gradient(135deg,#cfe0ff,#f3e9d2 60%,#cfe0ff);
+    position:relative;
+  }
+  .art-image svg{width:100%;height:100%;display:block;}
+  .art-card h2{font-size:23px;font-weight:800;margin:26px 0 8px;color:var(--ink);}
+  .art-card p{color:var(--muted);font-size:15px;line-height:1.55;margin:0;}
 
-        .icon-box {
-            background-color: #fff;
-            height: 100%;
-            width: 50px; /* Độ rộng icon cố định nhẹ */
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-        }
+  /* ---------- DASHBOARD ---------- */
+  #dashboard{display:none;min-height:100vh;}
+  .topbar{
+    background:#fff;
+    border-bottom:1px solid var(--line);
+    display:flex;align-items:center;gap:28px;
+    padding:10px 24px;
+    position:sticky;top:0;z-index:10;
+  }
+  .topbar .brand{gap:10px;}
+  .topbar .brand-badge{width:40px;height:40px;border-radius:10px;box-shadow:none;}
+  .topbar .brand-badge svg{width:22px;height:22px;}
+  .topbar .brand-text{font-size:13px;}
+  .topbar .brand-text .sub{color:var(--muted);font-weight:500;font-size:11.5px;}
+  .chev{color:var(--muted);cursor:pointer;}
 
-        .icon-box i {
-            font-size: 20px;
-            color: #333;
-        }
+  .nav{
+    display:flex;align-items:center;gap:4px;
+    flex:1;
+    overflow-x:auto;
+  }
+  .nav-item{
+    display:flex;flex-direction:column;align-items:center;gap:4px;
+    padding:6px 12px;
+    border-radius:10px;
+    cursor:pointer;
+    color:var(--muted);
+    font-size:11.5px;
+    font-weight:600;
+    white-space:nowrap;
+    position:relative;
+  }
+  .nav-item svg{width:20px;height:20px;}
+  .nav-item.active{color:var(--blue-700); background:#eaf0ff;}
+  .nav-item:hover{background:#f2f4f8;}
+  .nav-item .ai-tag{
+    position:absolute;top:-4px;right:2px;
+    background:linear-gradient(90deg,#7b5cff,#ff5c9a);
+    color:#fff;font-size:8px;font-weight:800;
+    padding:1px 4px;border-radius:5px;
+  }
 
-        .text-box {
-            padding: 0 10px;
-            color: var(--text-color);
-            font-weight: bold;
-            font-size: clamp(14px, 1.8vh, 20px); /* Tự co chữ theo chiều cao màn hình */
-            text-transform: uppercase;
-            line-height: 1.2;
-            overflow: hidden;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-        }
+  .top-actions{display:flex;align-items:center;gap:16px;}
+  .search-box{
+    display:flex;align-items:center;gap:8px;
+    background:#f2f4f8;border-radius:10px;
+    padding:8px 14px;color:var(--muted);font-size:13.5px;
+    width:200px;
+  }
+  .search-box svg{width:16px;height:16px;flex-shrink:0;}
+  .bell{position:relative;color:var(--ink);cursor:pointer;}
+  .bell svg{width:22px;height:22px;}
+  .bell .count{
+    position:absolute;top:-6px;right:-8px;
+    background:var(--red-600);color:#fff;
+    font-size:10px;font-weight:700;
+    min-width:16px;height:16px;border-radius:8px;
+    display:flex;align-items:center;justify-content:center;
+    padding:0 3px;
+  }
+  .avatar{
+    width:34px;height:34px;border-radius:50%;
+    background:linear-gradient(135deg,#ffb199,#ff7eb3);
+    position:relative;flex-shrink:0;
+  }
+  .avatar:after{
+    content:"";position:absolute;bottom:0;right:0;
+    width:9px;height:9px;border-radius:50%;
+    background:#2ecc71;border:2px solid #fff;
+  }
 
-        /* Responsive cho màn hình nhỏ hơn (Tablet) */
-        @media (max-width: 900px) {
-            .grid-system {
-                grid-template-columns: repeat(2, 1fr);
-                grid-template-rows: repeat(12, 1fr);
-            }
-        }
-    </style>
+  .hero{
+    background:linear-gradient(120deg,var(--blue-900),var(--blue-500));
+    padding:56px 24px 100px;
+    position:relative;
+    overflow:hidden;
+    text-align:center;
+    color:#fff;
+  }
+  .hero .flag-emblem{
+    position:absolute;top:50%;transform:translateY(-50%);
+    width:180px;height:130px;opacity:.9;
+  }
+  .hero .flag-left{left:24px;}
+  .hero .flag-right{right:24px;}
+  .hero h1{font-size:30px;margin:0 0 10px;font-weight:800;}
+  .hero p{margin:0 0 28px;opacity:.9;font-size:15px;}
+  .hero-search{
+    max-width:640px;margin:0 auto 34px;
+    background:#fff;border-radius:999px;
+    display:flex;align-items:center;gap:10px;
+    padding:14px 22px;
+    color:var(--muted);
+    box-shadow:0 12px 30px rgba(10,30,70,.25);
+  }
+  .hero-search svg{width:18px;height:18px;}
+  .app-grid{
+    display:flex;justify-content:center;gap:34px;
+    flex-wrap:wrap;
+    max-width:960px;margin:0 auto;
+  }
+  .app-tile{display:flex;flex-direction:column;align-items:center;gap:10px;width:96px;cursor:pointer;}
+  .app-tile .ic{
+    width:56px;height:56px;border-radius:16px;
+    background:#fff;
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:0 8px 18px rgba(10,30,70,.18);
+  }
+  .app-tile .ic svg{width:28px;height:28px;}
+  .app-tile span{font-size:12.5px;font-weight:600;line-height:1.3;}
+
+  .content{
+    max-width:1200px;margin:-64px auto 0;padding:0 24px 60px;
+    display:flex;flex-direction:column;gap:24px;
+  }
+  .panel{
+    background:#fff;border-radius:16px;
+    box-shadow:0 4px 20px rgba(20,40,90,.06);
+    border:1px solid var(--line);
+  }
+  .panel-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;}
+  @media (max-width:860px){.panel-grid{grid-template-columns:1fr;}}
+  .panel-header{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:20px 22px;border-bottom:1px solid var(--line);
+  }
+  .panel-header .title{display:flex;align-items:center;gap:10px;font-weight:700;font-size:15.5px;}
+  .panel-header .title svg{width:19px;height:19px;color:var(--blue-600);}
+  .panel-header a{color:var(--blue-600);font-size:13.5px;font-weight:600;text-decoration:none;}
+  .panel-header a:hover{text-decoration:underline;}
+
+  .meeting-list{padding:8px 10px;max-height:320px;overflow:auto;}
+  .meeting-day{
+    display:flex;align-items:flex-start;gap:14px;padding:14px 12px;
+    border-radius:10px;
+  }
+  .meeting-day:hover{background:#f7f9fc;}
+  .day-badge{
+    background:#da251d;color:#fff;border-radius:8px;
+    text-align:center;padding:6px 10px;font-size:11px;font-weight:700;flex-shrink:0;width:52px;
+  }
+  .day-badge .num{font-size:14px;}
+  .meeting-time{width:80px;flex-shrink:0;color:var(--muted);font-size:12.5px;font-weight:600;padding-top:2px;}
+  .meeting-body{flex:1;font-size:13.5px;line-height:1.5;}
+  .meeting-body .sub{color:var(--muted);font-size:12.5px;margin-top:2px;}
+  .join-btn{
+    background:#eafaf0;color:#1e8e4a;border:none;border-radius:8px;
+    padding:6px 12px;font-size:12px;font-weight:700;display:flex;align-items:center;gap:5px;cursor:pointer;flex-shrink:0;
+  }
+  .join-btn svg{width:13px;height:13px;}
+
+  .task-list{padding:6px 10px;}
+  .task-row{
+    display:flex;align-items:center;gap:12px;padding:12px;border-radius:10px;
+  }
+  .task-row:hover{background:#f7f9fc;}
+  .task-row input{width:17px;height:17px;accent-color:var(--blue-600);flex-shrink:0;}
+  .task-row .txt{flex:1;font-size:13.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .avatars-mini{display:flex;flex-shrink:0;}
+  .avatars-mini .mini{
+    width:22px;height:22px;border-radius:50%;border:2px solid #fff;margin-left:-6px;
+    background:linear-gradient(135deg,#a3c4ff,#7b5cff);
+  }
+  .flag-ico{width:14px;height:14px;flex-shrink:0;}
+  .task-date{font-size:12px;color:var(--muted);flex-shrink:0;width:44px;text-align:right;}
+
+  .section-title{font-weight:800;font-size:17px;margin:6px 2px 0;display:flex;align-items:center;justify-content:space-between;}
+  .section-title a{color:var(--blue-600);font-size:13.5px;font-weight:600;text-decoration:none;}
+  .report-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+  @media (max-width:860px){.report-grid{grid-template-columns:1fr;}}
+  .report-card{
+    background:#fff;border:1px solid var(--line);border-radius:16px;
+    padding:20px;display:flex;flex-direction:column;gap:10px;min-height:90px;
+  }
+  .report-card .ic{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;}
+  .report-card .ic svg{width:18px;height:18px;color:#fff;}
+
+  .footer-note{text-align:center;color:var(--muted);font-size:12.5px;padding:10px 0 30px;}
+</style>
 </head>
 <body>
 
-<header>
-    <div class="logo-container">
-        <a href="/">
-        <img src="./favicon.png" alt="Logo" class="main-logo">
-    	</a>
+<!-- ============ LOGIN SCREEN ============ -->
+<div id="login-screen">
+  <div class="form-panel">
+    <div class="top-row">
+      <div class="brand">
+        <div class="brand-badge">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 9h16M6 9v10a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V9M9 20v-6h6v6M12 3l8 6H4l8-6Z"/></svg>
+        </div>
+        <div class="brand-text"><span>Hanoi</span><span>Work</span></div>
+      </div>
+      <div class="lang-switch" id="langSwitch">
+        <span class="flag"></span> Tiếng Việt ▾
+      </div>
     </div>
-    <h1>Hệ thống quản lý thông tin y tế - Bệnh viện Y học cổ truyền Quảng Nam</h1>
-</header>
 
-<div class="main-content">
-    <div class="grid-system">
-        
-        <a href="https://docs.google.com/spreadsheets/d/1wzTMbG1TRJJn_o3et28iEWjRxrB4rXqcb_c7_ZQ_m74/edit?gid=1929287570#gid=1929287570" class="card" target="_blank">
-		<div class="icon-box"><i class="fa-solid fa-user-doctor"></i></div>
-		<div class="text-box">Báo cáo khám, chữa bệnh hàng ngày</div>
-	</a>
-	<a href="https://script.google.com/macros/s/AKfycbwjnZ9aLaSRGZBQRAGEDgSlw1r-Rd5GjUWmlxGFIZMFJrCGkFJ14Hytv4tHgFwxvJWk/exec" class="card" target="_blank">
-		<div class="icon-box"><i class="fa-solid fa-calendar-check"></i></div>
-		<div class="text-box">Lịch trực toàn viện</div>
-	</a>
-	<a href="https://nguyenvandung1409.github.io/ai-vanbanbyt/" class="card" target="_blank">
-		<div class="icon-box"><i class="fa-solid fa-book"></i></div>
-		<div class="text-box">Hệ thống văn bản Y tế - Bộ Y tế</div>
-	</a>
-	<a href="https://docs.google.com/spreadsheets/d/1EFUf22zfRlEXXDQSOK6MgsGZPimzW93yfcTdAMs158Y/edit?gid=144303086#gid=144303086" class="card" target="_blank">
-		<div class="icon-box"><i class="fa-solid fa-chart-line"></i></div>
-		<div class="text-box">Báo cáo kết quả hoạt động</div>
-	</a>
-	<a href="https://docs.google.com/spreadsheets/d/13VPg2capk0Lm_IZidWojO0iUG78ZTL8zlvw9F9K-DVw/edit#gid=0jfkhgXSYaxkUXtk" class="card" target="_blank">
-		<div class="icon-box"><i class="fa-solid fa-list-ol"></i></div>
-		<div class="text-box">Danh mục kỹ thuật tại Bệnh viện</div>
-	</a>
-        <a href="https://bvyhctquangnam.pythonanywhere.com/" class="card" target="_blank">
-		<div class="icon-box"><i class="fa-solid fa-award"></i></div>
-		<div class="text-box">Tự kiểm tra chất lượng Bệnh viện</div>
-	</a>
-	<a href="https://nguyenvandung1409.github.io/scyk/" class="card" target="_blank">
-		<div class="icon-box"><i class="fa-solid fa-triangle-exclamation"></i></div>
-		<div class="text-box">Báo cáo sự cố y khoa</div>
-	</a>	
-	<a href="https://docs.google.com/spreadsheets/d/1V8yc1kUKRXHXGJs1A32e_GfwTaI_qaWMeDzsb3D5xVw/edit?gid=0#gid=0" class="card" target="_blank">
-		<div class="icon-box"><i class="fa-solid fa-microscope"></i></div>
-		<div class="text-box">Theo dõi hoạt động thiết bị y tế tại viện</div>
-	</a>
-	<a href="https://nguyenvandung1409.github.io/ai-tracuuicd10yhct/" class="card" target="_blank">
-		<div class="icon-box"><i class="fa-solid fa-magnifying-glass"></i></div>
-		<div class="text-box">Tra cứu mã bệnh Y học cổ truyền</div>
-	</a>
-        
+    <h1>Đăng nhập</h1>
+
+    <div class="field">
+      <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 2H9a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2Z"/><path d="M12 18h.01"/></svg></span>
+      <input type="tel" placeholder="Số điện thoại của bạn" id="phoneInput">
     </div>
+
+    <div class="field">
+      <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></span>
+      <input type="password" placeholder="Mật khẩu" id="passInput">
+      <button class="toggle-eye" id="eyeToggle" type="button" aria-label="Hiện mật khẩu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m2 12 3-3.5C7 6 9.5 5 12 5s5 1 7 3.5L22 12l-3 3.5C17 18 14.5 19 12 19s-5-1-7-3.5L2 12Z"/><circle cx="12" cy="12" r="2.6"/></svg>
+      </button>
+    </div>
+
+    <div class="forgot"><a href="#">Quên mật khẩu?</a></div>
+
+    <div id="loginError" style="display:none;background:#fdecec;color:#c62828;border:1px solid #f5c2c2;border-radius:8px;padding:10px 14px;font-size:13.5px;margin-bottom:16px;"></div>
+
+    <button class="btn-primary" id="continueBtn">Tiếp tục</button>
+
+    <div class="divider">Hoặc đăng nhập bằng</div>
+
+    <div class="alt-login">
+      <span class="glyph" style="background:#eafaf0;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#1e8e4a" stroke-width="1.8"><path d="M12 2 4 6v6c0 5 3.5 8.5 8 10 4.5-1.5 8-5 8-10V6l-8-4Z"/><path d="M9.5 12.5l1.8 1.8L15 10.5"/></svg>
+      </span>
+      <span class="label">Định danh điện tử VNeID</span>
+      <span class="badge-soon">Sắp ra mắt</span>
+    </div>
+
+    <div class="alt-login">
+      <span class="glyph" style="background:#eaf0ff;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#1a4fc4" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 3.8 5.7 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.7-3.8-9S9.5 5.6 12 3Z"/></svg>
+      </span>
+      <span class="label">Nền tảng xác thực tập trung Hà Nội</span>
+    </div>
+  </div>
+
+  <div class="art-panel">
+    <div class="art-card">
+      <div class="art-image">
+        <svg viewBox="0 0 520 340" preserveAspectRatio="xMidYMid slice">
+          <rect width="520" height="340" fill="#bcd5ff"/>
+          <rect y="230" width="520" height="110" fill="#e7e2cf"/>
+          <rect x="60" y="120" width="400" height="150" fill="#f4efe1"/>
+          <rect x="90" y="60" width="60" height="210" fill="#efe9d8"/>
+          <rect x="370" y="40" width="90" height="230" fill="#efe9d8"/>
+          <g fill="#8fb0e6">
+            <rect x="110" y="150" width="20" height="30"/>
+            <rect x="145" y="150" width="20" height="30"/>
+            <rect x="180" y="150" width="20" height="30"/>
+            <rect x="390" y="90" width="18" height="26"/>
+            <rect x="420" y="90" width="18" height="26"/>
+          </g>
+          <circle cx="255" cy="95" r="16" fill="#d9b45a"/>
+          <g fill="#da251d">
+            <rect x="140" y="255" width="6" height="40"/>
+            <path d="M146 258 176 268 146 278Z"/>
+            <rect x="360" y="250" width="6" height="45"/>
+            <path d="M366 253 396 263 366 273Z"/>
+          </g>
+        </svg>
+      </div>
+      <h2>HanoiWork - Không gian làm việc số</h2>
+      <p>Một không gian làm việc số thống nhất, an toàn, thông suốt cho công chức và Đảng viên</p>
+    </div>
+  </div>
 </div>
 
+<!-- ============ DASHBOARD ============ -->
+<div id="dashboard">
+  <div class="topbar">
+    <div class="brand">
+      <div class="brand-badge">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 9h16M6 9v10a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V9M9 20v-6h6v6M12 3l8 6H4l8-6Z"/></svg>
+      </div>
+      <div class="brand-text">HanoiWork<span class="sub">Quản trị viên hệ thống</span></div>
+      <span class="chev">▾</span>
+    </div>
+
+    <div class="nav">
+      <div class="nav-item active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m3 11 9-7 9 7"/><path d="M5 10v10h14V10"/></svg>Trang chủ</div>
+      <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 17l6-6 4 4 8-8"/></svg>Bảng tin</div>
+      <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10Z"/></svg>Tin nhắn</div>
+      <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>Lịch</div>
+      <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 3h11l5 5v13H4Z"/><path d="M15 3v5h5"/></svg>Đảng</div>
+      <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M8 10h8M8 14h5"/></svg>Quy trình</div>
+      <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 4h6l1 3H8l1-3Z"/><rect x="5" y="7" width="14" height="14" rx="2"/></svg>Công việc</div>
+      <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 3h9l3 3v15H6Z"/><path d="M9 9h6M9 13h6M9 17h4"/></svg>Ghi chú</div>
+      <div class="nav-item">
+        <span class="ai-tag">AI</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/></svg>
+        AI Market
+      </div>
+      <div class="nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="4" width="6" height="6"/><rect x="14" y="4" width="6" height="6"/><rect x="4" y="14" width="6" height="6"/><rect x="14" y="14" width="6" height="6"/></svg>Xem thêm</div>
+    </div>
+
+    <div class="top-actions">
+      <div class="search-box">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+        Tìm kiếm...
+      </div>
+      <div class="bell">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9Z"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
+        <span class="count" id="notifCount">12</span>
+      </div>
+      <div class="avatar"></div>
+    </div>
+  </div>
+
+  <div class="hero">
+    <svg class="flag-emblem flag-left" viewBox="0 0 200 140"><rect width="200" height="140" fill="#da251d" rx="6"/><path d="M100 20 122 80 178 80 132 112 150 172 100 138 50 172 68 112 22 80 78 80Z" fill="#ffcd00" transform="scale(0.45) translate(120,10)"/></svg>
+    <svg class="flag-emblem flag-right" viewBox="0 0 200 140"><rect width="200" height="140" fill="#da251d" rx="6"/><path d="M100 20 122 80 178 80 132 112 150 172 100 138 50 172 68 112 22 80 78 80Z" fill="#ffcd00" transform="scale(0.45) translate(120,10)"/></svg>
+
+    <h1 id="heroGreeting">👋 Chào mừng bạn đến với HanoiWork</h1>
+    <p>Không gian làm việc số toàn diện cho Công chức và Đảng viên</p>
+
+    <div class="hero-search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+      Tìm kiếm thông minh...
+    </div>
+
+    <div class="app-grid">
+      <div class="app-tile"><span class="ic">🚩</span><span>Văn bản của Đảng</span></div>
+      <div class="app-tile"><span class="ic">⚖️</span><span>AI pháp luật</span></div>
+      <div class="app-tile"><span class="ic">📄</span><span>Quản lý văn bản Hà Nội</span></div>
+      <div class="app-tile"><span class="ic">🏛️</span><span>Dịch vụ công Hà Nội</span></div>
+      <div class="app-tile"><span class="ic">🤖</span><span>Website quản trị iHanoi</span></div>
+      <div class="app-tile"><span class="ic">🚩</span><span>Sổ tay Đảng viên</span></div>
+      <div class="app-tile"><span class="ic">☭</span><span>Dịch vụ công của Đảng</span></div>
+      <div class="app-tile"><span class="ic">▦</span><span>Tất cả ứng dụng</span></div>
+    </div>
+  </div>
+
+  <div class="content">
+    <div id="sheetWarning" style="display:none;background:#fff8e1;border:1px solid #ffe082;color:#8a6d00;border-radius:12px;padding:14px 18px;font-size:13.5px;line-height:1.5;"></div>
+    <div class="panel-grid">
+      <div class="panel">
+        <div class="panel-header">
+          <div class="title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
+            Phòng họp không giấy tờ
+          </div>
+          <a href="#">Xem tất cả</a>
+        </div>
+        <div class="meeting-list" id="meetingList"></div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">
+          <div class="title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 12l2 2 4-4"/><rect x="3" y="4" width="18" height="16" rx="2"/></svg>
+            Công việc cần giải quyết
+          </div>
+          <a href="#">Xem tất cả</a>
+        </div>
+        <div class="task-list" id="taskList"></div>
+      </div>
+    </div>
+
+    <div class="section-title">Báo cáo dự án <a href="#">Xem tất cả</a></div>
+    <div class="report-grid" id="reportGrid"></div>
+
+    <div class="footer-note">© 2026 HanoiWork — Nền tảng công vụ số. Demo giao diện tĩnh, không kết nối dữ liệu thật.</div>
+  </div>
+</div>
+
+<script>
+/* ---------- LOGIN INTERACTIONS ---------- */
+const eyeToggle = document.getElementById('eyeToggle');
+const passInput = document.getElementById('passInput');
+eyeToggle.addEventListener('click', () => {
+  const isPass = passInput.type === 'password';
+  passInput.type = isPass ? 'text' : 'password';
+});
+
+document.getElementById('langSwitch').addEventListener('click', function(){
+  alert('Chuyển đổi ngôn ngữ (demo) — hiện chỉ hỗ trợ Tiếng Việt.');
+});
+
+const continueBtn = document.getElementById('continueBtn');
+const loginError = document.getElementById('loginError');
+
+function showLoginError(msg){
+  loginError.textContent = msg;
+  loginError.style.display = 'block';
+}
+function hideLoginError(){
+  loginError.style.display = 'none';
+}
+
+continueBtn.addEventListener('click', async () => {
+  const phone = document.getElementById('phoneInput').value.trim();
+  const pass = passInput.value.trim();
+  hideLoginError();
+
+  if(!phone || !pass){
+    showLoginError('Vui lòng nhập số điện thoại và mật khẩu.');
+    return;
+  }
+
+  continueBtn.disabled = true;
+  const originalLabel = continueBtn.textContent;
+  continueBtn.textContent = 'Đang kiểm tra...';
+
+  try{
+    const user = await authenticate(phone, pass);
+    if(!user){
+      showLoginError('Sai số điện thoại hoặc mật khẩu.');
+      return;
+    }
+    currentUser = user;
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('dashboard').style.display = 'block';
+    renderDashboard();
+  } catch(err){
+    console.error(err);
+    showLoginError(err.message || 'Không kết nối được tới hệ thống xác thực. Vui lòng thử lại.');
+  } finally {
+    continueBtn.disabled = false;
+    continueBtn.textContent = originalLabel;
+  }
+});
+
+document.querySelectorAll('.alt-login').forEach(el=>{
+  el.addEventListener('click', ()=> alert('Tính năng đăng nhập này sắp ra mắt.'));
+});
+
+/* ---------- DASHBOARD DATA + NAV ---------- */
+const navItems = document.querySelectorAll('.nav-item');
+navItems.forEach(item=>{
+  item.addEventListener('click', ()=>{
+    navItems.forEach(i=>i.classList.remove('active'));
+    item.classList.add('active');
+  });
+});
+
+/* ================================================================
+   GOOGLE SHEET CONNECTION
+   ----------------------------------------------------------------
+   1. Tạo 1 Google Sheet với 4 tab (đặt tên đúng như bên dưới):
+        "Meetings"  cột: Day | Date | Time | Title | Sub | Join
+        "Tasks"     cột: Text | Date | Color
+        "Reports"   cột: Title | Icon | Color
+        "Users"     cột: Phone | Password | Name
+      (Dòng đầu tiên là tiêu đề cột, viết đúng chính tả như trên,
+       không phân biệt hoa/thường)
+   2. File > Chia sẻ > "Bất kỳ ai có đường liên kết" > Người xem.
+   3. Copy ID của Sheet trong đường link:
+        https://docs.google.com/spreadsheets/d/  ID_NẰM_Ở_ĐÂY  /edit
+   4. Dán ID đó vào SHEET_ID bên dưới.
+   Nếu chưa cấu hình SHEET_ID, dashboard sẽ tự dùng dữ liệu mẫu và
+   đăng nhập demo (chấp nhận bất kỳ SĐT/mật khẩu không rỗng).
+
+   ⚠️ LƯU Ý BẢO MẬT: cách này lưu mật khẩu dạng văn bản thô (plain
+   text) trong Sheet công khai dạng "ai có link cũng xem được".
+   Bất kỳ ai biết ID Sheet đều có thể đọc được toàn bộ danh sách
+   mật khẩu qua link CSV. Chỉ phù hợp cho nội bộ/demo, KHÔNG nên
+   dùng cho hệ thống có dữ liệu thật hoặc mật khẩu người dùng quan
+   trọng. Nếu cần an toàn hơn, nên chuyển sang Google Apps Script
+   (kiểm tra phía server) hoặc dịch vụ xác thực như Firebase Auth.
+================================================================ */
+const CONFIG = {
+  sheetId: '12bSMJEZ_0IzGZilzQpNctMyi03WrRF6cb7oMrPNv7QA',
+  tabs: { meetings: 'Meetings', tasks: 'Tasks', reports: 'Reports', users: 'Users' },
+  refreshMs: 60000 // tự làm mới mỗi 60s, đặt 0 để tắt
+};
+
+let currentUser = null;
+
+/* ---- Xác thực đăng nhập dựa trên tab "Users" ---- */
+async function authenticate(phone, password){
+  // Chưa cấu hình Sheet -> chế độ demo, chấp nhận mọi SĐT/mật khẩu không rỗng
+  if(!CONFIG.sheetId){
+    return { name: 'Người dùng demo', phone };
+  }
+  const users = await fetchTab(CONFIG.tabs.users);
+  const match = users.find(u =>
+    (u.phone || '').trim() === phone &&
+    (u.password || '').trim() === password
+  );
+  return match ? { name: match.name || 'Người dùng', phone } : null;
+}
+
+const fallback = {
+  meetings: [
+    {day:'Thứ 2', date:'01/12', time:'9:30-10:30', title:'Hội nghị tập huấn việc cấu hình, quản lý tài khoản tiếp nhận, xử lý phản ánh, kiến nghị trên ứng dụng iHanoi cho các Sở, ban, ngành; UBND các xã, phường trên địa bàn Thành phố', sub:'', join:'TRUE'},
+    {day:'Thứ 2', date:'01/12', time:'9:30-10:30', title:'Họp giao ban thứ 2 ngày 7/12', sub:'Trao đổi về văn hoá và vận hành Dự án đột phá', join:'FALSE'},
+    {day:'Thứ 2', date:'01/12', time:'9:30-10:30', title:'Đ/c Giám đốc Tiếp Đoàn công tác Saigonbank (NH của TU TP HCM) tham quan mô hình Kiosk thông minh', sub:'', join:'FALSE'}
+  ],
+  tasks: [
+    {text:'Ban hành Thông báo kết luận kiểm tra Văn phòng...', date:'24/12', color:'#da251d'},
+    {text:'Tham mưu văn bản gửi các Sở, Ban, ngành, U...', date:'24/12', color:'#ff8a00'},
+    {text:'Triển khai tổ dân phố số phường Cửa Nam', date:'24/12', color:'#1a4fc4'},
+    {text:'[16/12/2025] Tổng hợp báo cáo Nghị quyết 57...', date:'24/12', color:'#9aa2b1'},
+    {text:'[15/12/2025] Tổng hợp báo cáo Nghị quyết 57...', date:'24/12', color:'#9aa2b1'}
+  ],
+  reports: [
+    {title:'Chuyển đổi số cấp xã, phường', icon:'💻', color:'#1a4fc4'},
+    {title:'Dự án đột phá 2026', icon:'🚀', color:'#1e8e4a'},
+    {title:'Chỉnh trang đô thị trung tâm', icon:'🏙️', color:'#da251d'}
+  ]
+};
+
+/* ---- CSV fetch + parse (tolerant of quoted commas) ---- */
+function csvUrl(tabName){
+  return `https://docs.google.com/spreadsheets/d/${CONFIG.sheetId}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(tabName)}`;
+}
+function parseCSV(text){
+  const rows = [];
+  let row = [], field = '', inQuotes = false;
+  for(let i=0;i<text.length;i++){
+    const c = text[i];
+    if(inQuotes){
+      if(c === '"'){
+        if(text[i+1] === '"'){ field += '"'; i++; } else { inQuotes = false; }
+      } else field += c;
+    } else {
+      if(c === '"') inQuotes = true;
+      else if(c === ','){ row.push(field); field=''; }
+      else if(c === '\n' || c === '\r'){
+        if(field !== '' || row.length){ row.push(field); rows.push(row); }
+        field=''; row=[];
+        if(c==='\r' && text[i+1]==='\n') i++;
+      } else field += c;
+    }
+  }
+  if(field !== '' || row.length){ row.push(field); rows.push(row); }
+  if(!rows.length) return [];
+  const headers = rows[0].map(h => h.trim().toLowerCase());
+  return rows.slice(1)
+    .filter(r => r.some(v => v.trim() !== ''))
+    .map(r => {
+      const obj = {};
+      headers.forEach((h,idx) => obj[h] = (r[idx] || '').trim());
+      return obj;
+    });
+}
+let sheetError = null;
+
+async function fetchTab(tabName){
+  let res;
+  try{
+    res = await fetch(csvUrl(tabName));
+  } catch(networkErr){
+    throw new Error(`Không gọi được mạng tới Google (có thể do CORS hoặc mất kết nối) khi tải tab "${tabName}".`);
+  }
+  if(res.status === 400 || res.status === 404){
+    throw new Error(`Không tìm thấy tab "${tabName}". Kiểm tra lại tên tab có đúng chính tả/không dư dấu cách không.`);
+  }
+  if(res.status === 401 || res.status === 403){
+    throw new Error(`Sheet chưa được chia sẻ công khai. Vào File > Chia sẻ > đổi thành "Bất kỳ ai có đường liên kết – Người xem".`);
+  }
+  if(!res.ok){
+    throw new Error(`Lỗi tải tab "${tabName}" (mã lỗi ${res.status}).`);
+  }
+  const text = await res.text();
+  if(text.trim().startsWith('<')){
+    // Google trả về trang HTML (thường là trang đăng nhập/lỗi quyền) thay vì CSV
+    throw new Error(`Sheet có vẻ chưa công khai — Google trả về trang đăng nhập thay vì dữ liệu (tab "${tabName}").`);
+  }
+  return parseCSV(text);
+}
+
+async function loadSheetData(){
+  sheetError = null;
+  if(!CONFIG.sheetId){
+    return fallback; // chưa cấu hình -> dùng dữ liệu mẫu
+  }
+  try{
+    const [meetingsRaw, tasksRaw, reportsRaw] = await Promise.all([
+      fetchTab(CONFIG.tabs.meetings),
+      fetchTab(CONFIG.tabs.tasks),
+      fetchTab(CONFIG.tabs.reports)
+    ]);
+    return {
+      meetings: meetingsRaw.map(r => ({
+        day: r.day || '', date: r.date || '', time: r.time || '',
+        title: r.title || '', sub: r.sub || '', join: r.join || 'FALSE'
+      })),
+      tasks: tasksRaw.map(r => ({
+        text: r.text || '', date: r.date || '', color: r.color || '#9aa2b1'
+      })),
+      reports: reportsRaw.map(r => ({
+        title: r.title || '', icon: r.icon || '📁', color: r.color || '#1a4fc4'
+      }))
+    };
+  } catch(err){
+    sheetError = err.message || String(err);
+    console.warn('Không kết nối được Google Sheet, dùng dữ liệu mẫu:', err);
+    return fallback;
+  }
+}
+
+function paintMeetings(list){
+  const ml = document.getElementById('meetingList');
+  ml.innerHTML = list.map(m => `
+    <div class="meeting-day">
+      <div class="day-badge">${m.day}<div class="num">${m.date}</div></div>
+      <div class="meeting-time">${m.time}</div>
+      <div class="meeting-body">
+        ${m.title}
+        ${m.sub ? `<div class="sub">${m.sub}</div>` : ''}
+      </div>
+      ${String(m.join).toUpperCase()==='TRUE' ? `<button class="join-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m10 8 6 4-6 4V8Z"/></svg>Tham gia</button>` : ''}
+    </div>
+  `).join('') || '<div style="padding:20px;color:var(--muted);font-size:13.5px;">Chưa có lịch họp.</div>';
+}
+function paintTasks(list){
+  const tl = document.getElementById('taskList');
+  tl.innerHTML = list.map(t => `
+    <div class="task-row">
+      <input type="checkbox">
+      <div class="txt">${t.text}</div>
+      <div class="avatars-mini"><div class="mini"></div><div class="mini"></div></div>
+      <svg class="flag-ico" viewBox="0 0 24 24" fill="${t.color}"><path d="M5 3v18M5 4h12l-3 4 3 4H5"/></svg>
+      <div class="task-date">${t.date}</div>
+    </div>
+  `).join('') || '<div style="padding:20px;color:var(--muted);font-size:13.5px;">Không có công việc nào.</div>';
+}
+function paintReports(list){
+  const rg = document.getElementById('reportGrid');
+  rg.innerHTML = list.map(r => `
+    <div class="report-card">
+      <div class="ic" style="background:${r.color}"><span style="font-size:16px;">${r.icon}</span></div>
+      <strong>${r.title}</strong>
+    </div>
+  `).join('') || '<div style="color:var(--muted);font-size:13.5px;">Chưa có báo cáo.</div>';
+}
+
+let sheetTimer = null;
+async function renderDashboard(){
+  if(currentUser && currentUser.name){
+    document.getElementById('heroGreeting').textContent = `👋 Chào mừng ${currentUser.name} đến với HanoiWork`;
+  }
+  const data = await loadSheetData();
+  const warnEl = document.getElementById('sheetWarning');
+  if(sheetError){
+    warnEl.style.display = 'block';
+    warnEl.innerHTML = `⚠️ <strong>Chưa kết nối được Google Sheet</strong> — đang hiển thị dữ liệu mẫu.<br>Lý do: ${sheetError}`;
+  } else if(warnEl){
+    warnEl.style.display = 'none';
+  }
+  paintMeetings(data.meetings);
+  paintTasks(data.tasks);
+  paintReports(data.reports);
+
+  if(CONFIG.sheetId && CONFIG.refreshMs > 0 && !sheetTimer){
+    sheetTimer = setInterval(async () => {
+      const fresh = await loadSheetData();
+      paintMeetings(fresh.meetings);
+      paintTasks(fresh.tasks);
+      paintReports(fresh.reports);
+    }, CONFIG.refreshMs);
+  }
+}
+</script>
 </body>
 </html>
