@@ -478,7 +478,7 @@
 
   <div class="hero">    
 
-    <h1 id="heroGreeting">👋 Chào mừng bạn đến với Bệnh viện</h1>
+    <h1 id="heroGreeting">👋 Chào mừng bạn đến với Bệnh viện Y học cổ truyền Quảng Nam</h1>
     <p>Không gian làm việc số toàn diện</p>
 
     <div class="hero-search">
@@ -487,11 +487,11 @@
     </div>
 
     <div class="app-grid">
-      <div class="app-tile"><span class="ic">🚩</span><span>Văn bản của Đảng</span></div>
+      <a href="https://bvyhctquangnam.github.io"<div class="app-tile"><span class="ic">🚩</span><span>Website nội bộ</span></div></a>
       <div class="app-tile"><span class="ic">⚖️</span><span>AI pháp luật</span></div>
       <div class="app-tile"><span class="ic">📄</span><span>Quản lý văn bản Hà Nội</span></div>
       <div class="app-tile"><span class="ic">🏛️</span><span>Dịch vụ công Hà Nội</span></div>
-      <div class="app-tile"><span class="ic">🤖</span><span>Website quản trị iHanoi</span></div>
+      <a href="https://bvyhctquangnam.vn"<div class="app-tile"><span class="ic">🤖</span><span>Website Bệnh viện</span></div></a>
       <div class="app-tile"><span class="ic">🚩</span><span>Sổ tay Đảng viên</span></div>      
       <div class="app-tile"><span class="ic">▦</span><span>Tất cả ứng dụng</span></div>
     </div>
@@ -526,7 +526,7 @@
     <div class="section-title">Báo cáo dự án <a href="#">Xem tất cả</a></div>
     <div class="report-grid" id="reportGrid"></div>
 
-    <div class="footer-note">© 2026 HanoiWork — Nền tảng công vụ số. Demo giao diện tĩnh, không kết nối dữ liệu thật.</div>
+    <div class="footer-note">© 2026 Nền tảng công vụ số</div>
   </div>
 </div>
 
@@ -796,7 +796,7 @@ function paintReports(list){
 let sheetTimer = null;
 async function renderDashboard(){
   if(currentUser && currentUser.name){
-    document.getElementById('heroGreeting').textContent = `👋 Chào mừng ${currentUser.name} đến với HanoiWork`;
+    document.getElementById('heroGreeting').textContent = `👋 Chào mừng ${currentUser.name} đến với Bệnh viện`;
   }
   const data = await loadSheetData();
   const warnEl = document.getElementById('sheetWarning');
